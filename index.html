@@ -2,122 +2,12 @@
 <head>
     <meta charset="utf-8">
     <title>slot machine</title>
-    <style type="text/css" media="screen">
-    #slotmachine{
-        height: 465px;
-        width: 660px;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin:auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .body-wrapper{
-        height: 520px;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin:auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .slot_drum{
-        height: 465px;
-        width: 220px;
-        background-clip: border-box;
-    }
-    #slot1{
-        background-image: url("slot1.png");
-        background-repeat: repeat-y;
-    }
-    #slot2{
-        background-image: url("slot2.png");
-        background-repeat: repeat-y;
-    }
-    #slot3{
-        background-image: url("slot3.png");
-        background-repeat: repeat-y;
-    }
-    #start{
-        align-self: flex-end;
-    }
-    @keyframes moveImage{
-        from {
-            background-position-y: 0px;
-        }
-        to{
-            background-position-y: 1395px;
-        }
-    }
-    </style>
-    <script charset="utf-8">
-window.onload = function(){
-    let button_start = document.getElementById("start")
-    var slot1 =document.getElementById("slot1");
-    var slot2 =document.getElementById("slot2");
-    var slot3 =document.getElementById("slot3");
-    var slot1_positions = ["pic1", "pic3", "pic2"];
-    var slot2_positions = ["pic2", "pic1", "pic3"];
-    var slot3_positions = ["pic3", "pic2", "pic1"];
-    var y1 = 0;
-    var y2 = 0;
-    var y3 = 0;
-    button_start.addEventListener("click", function(){
-        var iterator1 = 0;
-        var iterator2 = 0;
-        var iterator3 = 0;
-        var refreshIntervalId1 = window.setInterval(function(){
-            y1 =(y1 % 1395) + 5;
-            slot1.style.backgroundPosition = '0 '+ y1 + 'px';
-            if(y1 % 465 === 0){
-                iterator1++;
-            }
-            if(iterator1 === 2){
-               window.clearInterval(refreshIntervalId1);
-            }
-        }, 1);
-        var refreshIntervalId2 = window.setInterval(function(){
-            y2 =(y2 % 1395) + 5;
-            slot2.style.backgroundPosition = '0 '+ y2 + 'px';
-            if(y2 % 465 === 0){
-                iterator2++;
-            }
-            if(iterator2 === 4){
-               window.clearInterval(refreshIntervalId2);
-            }
-        }, 1);
-        var refreshIntervalId3 = window.setInterval(function(){
-            y3 =(y3 % 1395) + 5;
-            slot3.style.backgroundPosition = '0 '+ y3 + 'px';
-            if(y3 % 465 === 0){
-                iterator3++;
-            }
-            if(iterator3 === 6){
-               window.clearInterval(refreshIntervalId3);
-            }
-        }, 1);
-
-    });
-};
-    </script>
+    <script charset="utf-8" src="index.js"></script>
 </head>
 <body>
     <div class="body-wrapper">
-        <div id="slotmachine" class="name">
-            <div id="slot1" class="slot_drum">
-            </div>
-            <div id="slot2" class="slot_drum">
-            </div>
-            <div id="slot3" class="slot_drum">
-            </div>
-        </div>
+        <canvas id="slots" width="900" height="300">
+        </canvas>
     <button id="start" type="button">Start</button>
     </div>
 </body>

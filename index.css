@@ -1,0 +1,54 @@
+    #slotmachine{
+        height: 465px;
+        width: 660px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin:auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .body-wrapper{
+        height: 520px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin:auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .slot_drum{
+        height: 465px;
+        width: 220px;
+        background-clip: border-box;
+    }
+    #slot1{
+        background-image: url("slot1.png");
+        background-repeat: repeat-y;
+    }
+    #slot2{
+        background-image: url("slot2.png");
+        background-repeat: repeat-y;
+    }
+    #slot3{
+        background-image: url("slot3.png");
+        background-repeat: repeat-y;
+    }
+    #start{
+        align-self: flex-end;
+    }
+    @keyframes moveImage{
+        from {
+            background-position-y: 0px;
+        }
+        to{
+            background-position-y: 1395px;
+        }
+    }
+    
