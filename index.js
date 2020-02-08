@@ -1,65 +1,126 @@
-var slot1 = new Image();
-var slot2 = new Image();
-var slot3 = new Image();
-function Slot(element, picturePositions, imageHeight, pictureHeight){
-    this.element = element;
-    this.picturePositions = picturePositions;
-    this.imageHeight = imageHeight;
-    this.pictureHeight = pictureHeight;
+function Slot(canvas, image, picturePositions){
+    this.image = image;
+    this.canvas = canvas;
+    this.canvasContext = this.canvas.getContext("2d"); 
+    this.positionOnCanvas = picturePositions;
     this.refreshIntervalId;
+    this.stop = false;
     this.slotPosY = 0;
-    this.iterator = 0;
-    var _this = this;
+    this.displacement = 100;
+    this.stopPosition = randomChoice([0,-465, -930]);
 
-    this.stopSlot = function(){
-        window.clearInterval(_this.refreshIntervalId);
-        _this.iterator = 0;
+    this.drawFirstFrame = function(){
+        this.canvasContext.drawImage(this.image, this.positionOnCanvas.x, 0, this.image.width, this.image.height);
     }
-    this.startSlots = function(stopIterationCount){
-        _this.refreshIntervalId = setInterval(_this.rollSlots, 1, stopIterationCount);
+    this.drawSlotFrame = function(){
+        if(this.slotPosY > this.canvas.height){
+            this.slotPosY = (this.canvas.height - this.image.height);
+        }
+        if(this.slotPosY > (this.canvas.height - this.image.height)){
+            this.canvasContext.drawImage(this.image, this.positionOnCanvas.x, this.slotPosY - this.image.height+1, this.image.width, this.image.height);
+        }
+        this.canvasContext.drawImage(this.image, this.positionOnCanvas.x, this.slotPosY, this.image.width, this.image.height);
+        this.calculateSlotPosY();
     }
-    this.rollSlots = function(stopIterationCount){
-        _this.slotPosY = (_this.slotPosY % _this.imageHeight) + 5;
-        _this.element.style.backgroundPosition = '0 '+ _this.slotPosY + 'px';
-        if(_this.slotPosY % _this.pictureHeight === 0){
-            _this.iterator++;
+
+    this.calculateSlotPosY = function(){
+        if(this.stop){
+            if (this.slotPosY !== this.stopPosition ) {
+                return this.slotPosY = this.stopPosition;
+            }
+            else{
+                this.displacement = 0;
+                return this.slotPosY;
+            }
         }
-        if(_this.iterator === stopIterationCount){
-            _this.stopSlot()
-        }
+        return this.slotPosY += this.displacement;
     }
 }
+function SlotMachine(slots, canvas){
+    this.slots = slots;
+    this.canvas = canvas;
+    this.canvas.width = 3 * this.slots[0].image.width;
+    this.stop = false;
+    this.canvasContext = this.canvas.getContext("2d");
+    this.drawFirstFrame = function(){
+        this.canvasContext.clearRect(0,0, this.canvas.width, this.canvas.height);
+        for(let i = 0; i < this.slots.length; i++){
+            let currentSlot = this.slots[i];
+            currentSlot.drawFirstFrame();
+        }
+    }
+    this.startSlots = function(){
+        for(let i = 0; i < this.slots.length; i++){
+            let currentSlot = this.slots[i];
+            currentSlot.stopPosition = randomChoice([0,-465, -930]);
+            currentSlot.displacement = 100;
+            currentSlot.stop = false;
+        }
+        this.stop = false;
+        this.draw();
+    }
+    this.drawSlotFrame = function(){
+        this.canvasContext.clearRect(0,0, this.canvas.width, this.canvas.height);
+        for(let i = 0; i < this.slots.length; i++){
+            let currentSlot = this.slots[i];
+            currentSlot.drawSlotFrame();
+        }
+
+        window.requestAnimationFrame(this.draw.bind(this));
+    }
+    this.stopSlots = function(){
+        var nextTimeout = 0;
+        for(let i = 0; i < this.slots.length; i++){
+            nextTimeout += 500;
+            let currentSlot = this.slots[i];
+            window.setTimeout(function() {currentSlot.stop = true;}, nextTimeout);
+        }
+    }
+    this.draw = function(){
+        if(this.stop){
+            return
+        }
+        this.drawSlotFrame();
+    }
+}
+
 
 function getRandomInt(min, max) {
       min = Math.ceil(min);
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
-var dy = 50;
-var y = 0;
-function draw(){
-    var ctx = document.getElementById('slots').getContext('2d');
-    ctx.clearRect(0,0, 600, 300);
-    if(y > 300){
-        y = (300-slot1.height);
-    }
-    if (y > (300 - slot1.height)){
-        ctx.drawImage(slot1, 0, y - slot1.height+1, slot1.width, slot1.height);
-        ctx.drawImage(slot2, slot1.width , y - slot1.height+1, slot1.width, slot1.height);
-        ctx.drawImage(slot2, slot1.width *2, y - slot1.height+1, slot1.width, slot1.height);
-    }
-    ctx.drawImage(slot1, 0, y, slot1.width, slot1.height);
-    ctx.drawImage(slot2, slot1.width, y, slot2.width, slot2.height);
-    ctx.drawImage(slot3, slot1.width * 2, y, slot2.width, slot2.height);
-    y+= dy
-    window.requestAnimationFrame(draw);
+function randomChoice(array){
+    var rand = Math.random();
+    rand *= array.length;
+    return array[Math.floor(rand)];
 }
 
 function init(){
-    slot1.src = 'slot1.png';
-    slot2.src = 'slot2.png';
-    slot3.src = 'slot3.png';
-    window.requestAnimationFrame(draw);
+    var slotImg1 = new Image();
+    var slotImg2 = new Image();
+    var slotImg3 = new Image();
+    slotImg1.src = 'slot1.png';
+    slotImg2.src = 'slot1.png';
+    slotImg3.src = 'slot1.png';
+    var canvas = document.getElementById('slots');
+    var slot1 = new Slot(canvas, slotImg1, {x: 0, y:0});
+    var slot2 = new Slot(canvas, slotImg2, {x: slotImg1.width, y:0});
+    var slot3 = new Slot(canvas, slotImg3, {x: slotImg2.width * 2, y:0})
+    var slotMachine = new SlotMachine([slot1,slot2,slot3], canvas);
+    var startButton = document.getElementById('start');
+    slotImg3.onload = function(){slotMachine.drawFirstFrame();}
+    startButton.addEventListener('click', function(){
+        slotMachine.startSlots();
+        startButton.disabled = true;
+        window.setTimeout(function(){
+            slotMachine.stopSlots();
+            window.setTimeout(function(){ 
+                startButton.disabled = false;
+                slotMachine.stop = true;
+            }, 1550);
+        }, 2000);
+    });
 }
 
 
