@@ -97,9 +97,9 @@ function randomChoice(array){
 }
 
 function init(){
-    var slotImg1 = new Image();
-    var slotImg2 = new Image();
-    var slotImg3 = new Image();
+    var slotImg1 = new Image(220, 1395);
+    var slotImg2 = new Image(220, 1395);
+    var slotImg3 = new Image(220, 1395);
     slotImg1.src = 'slot1.png';
     slotImg2.src = 'slot1.png';
     slotImg3.src = 'slot1.png';
@@ -109,7 +109,9 @@ function init(){
     var slot3 = new Slot(canvas, slotImg3, {x: slotImg2.width * 2, y:0})
     var slotMachine = new SlotMachine([slot1,slot2,slot3], canvas);
     var startButton = document.getElementById('start');
-    slotImg3.onload = function(){slotMachine.drawFirstFrame();}
+    slotImg3.onload = function(){
+        slotMachine.drawFirstFrame();
+    }
     startButton.addEventListener('click', function(){
         slotMachine.startSlots();
         startButton.disabled = true;
